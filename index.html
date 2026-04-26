@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arsam Ai — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cyan: #00f5ff;
+    --purple: #a855f7;
+    --pink: #f472b6;
+    --dark: #04040f;
+    --dark2: #080818;
+    --card-bg: rgba(255,255,255,0.03);
+    --border: rgba(0,245,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--dark);
+    color: white;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ============================
+     CUSTOM CURSOR
+  ============================ */
+  #cursor {
+    width: 12px; height: 12px;
+    background: var(--cyan);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: screen;
+  }
+  #cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(0,245,255,0.5);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+  }
+
+  /* ============================
+     ANIMATED BACKGROUND CANVAS
+  ============================ */
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ============================
+     NAVBAR
+  ============================ */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(4,4,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo span { color: var(--pink); -webkit-text-fill-color: var(--pink); }
+
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+
+  /* ============================
+     HERO
+  ============================ */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 6px;
+    color: var(--cyan);
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-name {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .hero-name .first { color: white; }
+  .hero-name .last {
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+  }
+
+  .hero-tagline {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .hero-desc {
+    max-width: 520px;
+    color: rgba(255,255,255,0.55);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn {
+    padding: 0.85rem 2.2rem;
+    border-radius: 4px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 700;
+    border: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-transform: uppercase;
+  }
+
+  .btn-glow {
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    color: #000;
+    box-shadow: 0 0 20px rgba(0,245,255,0.4);
+  }
+  .btn-glow:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 40px rgba(0,245,255,0.7), 0 0 80px rgba(168,85,247,0.3);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+  }
+  .btn-outline:hover {
+    background: rgba(0,245,255,0.1);
+    transform: translateY(-4px);
+    box-shadow: 0 0 20px rgba(0,245,255,0.2);
+  }
+
+  /* ============================
+     SCROLL INDICATOR
+  ============================ */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    animation: fadeUp 1s 0.8s ease both;
+  }
+
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--cyan), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  /* ============================
+     DIVIDER
+  ============================ */
+  .divider {
+    position: relative; z-index: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), transparent);
+    opacity: 0.4;
+    margin: 0 3rem;
+  }
+
+  /* ============================
+     SECTIONS
+  ============================ */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .section-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 6px;
+    color: var(--cyan);
+    opacity: 0.7;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: white;
+  }
+
+  .section-title span {
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ============================
+     SKILL CARDS (3D hover)
+  ============================ */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .skill-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(0,245,255,0.1) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .skill-card:hover::after { opacity: 1; }
+  .skill-card:hover {
+    border-color: rgba(0,245,255,0.4);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(0,245,255,0.15);
+  }
+
+  .skill-icon {
+    font-size: 2.8rem;
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+
+  .skill-card h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.6rem;
+    color: var(--cyan);
+  }
+
+  .skill-card p {
+    color: rgba(255,255,255,0.45);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .skill-bar {
+    margin-top: 1rem;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    transition: width 1s ease;
+    width: 0;
+  }
+
+  /* ============================
+     BLOG CARDS
+  ============================ */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .blog-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.35s ease;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(168,85,247,0.4);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 20px rgba(168,85,247,0.15);
+  }
+
+  .blog-thumb {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .blog-thumb-1 { background: linear-gradient(135deg, #0d0d2b, #1a0533); }
+  .blog-thumb-2 { background: linear-gradient(135deg, #001a1a, #003333); }
+  .blog-thumb-3 { background: linear-gradient(135deg, #1a0505, #330022); }
+
+  .blog-body { padding: 1.5rem; }
+
+  .blog-tag {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--purple);
+    background: rgba(168,85,247,0.1);
+    border: 1px solid rgba(168,85,247,0.2);
+    padding: 0.25rem 0.7rem;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .blog-body h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 0.6rem;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .blog-body p {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .blog-meta {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    gap: 1rem;
+  }
+
+  /* ============================
+     ABOUT / STATS
+  ============================ */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    nav { padding: 1rem 1.5rem; }
+    section { padding: 4rem 1.5rem; }
+  }
+
+  .about-text h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+    line-height: 1.3;
+  }
+
+  .about-text p {
+    color: rgba(255,255,255,0.55);
+    line-height: 1.9;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .stat-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 0.3rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ============================
+     CONTACT
+  ============================ */
+  .contact-box {
+    background: rgba(0,245,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 3rem;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .contact-box h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .contact-box p {
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 2rem;
+    line-height: 1.8;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .form-input {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    color: white;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+    width: 100%;
+  }
+
+  .form-input:focus { border-color: var(--cyan); }
+  .form-input::placeholder { color: rgba(255,255,255,0.3); }
+
+  textarea.form-input { resize: vertical; min-height: 120px; }
+
+  .form-submit {
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+
+  .form-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 30px rgba(0,245,255,0.5);
+  }
+
+  /* ============================
+     FOOTER
+  ============================ */
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .footer-text {
+    color: rgba(255,255,255,0.3);
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- BACKGROUND CANVAS -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">ARSAM<span>.</span>AI</div>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#blog">Blog</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO SECTION -->
+<div class="hero">
+  <p class="hero-eyebrow">✦ Welcome to my world ✦</p>
+  <div class="hero-name">
+    <span class="first">ARSAM</span>
+    <span class="last">AI</span>
+  </div>
+  <p class="hero-tagline">Creative Developer &amp; Digital Innovator</p>
+  <p class="hero-desc">
+    Main 3D websites, AI tools, aur digital experiences banata hoon.
+    Mera kaam sirf code nahi — mera kaam art hai.
+  </p>
+  <div class="hero-btns">
+    <a href="#skills" class="btn btn-glow">Mera Kaam Dekho</a>
+    <a href="#contact" class="btn btn-outline">Baat Karo</a>
+  </div>
+  <div class="scroll-indicator">
+    <span>SCROLL</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SKILLS SECTION -->
+<section id="skills">
+  <div class="section-header">
+    <p class="section-label">// my arsenal</p>
+    <h2 class="section-title">Meri <span>Skills</span></h2>
+  </div>
+  <div class="cards-grid">
+    <div class="skill-card" data-skill="90">
+      <span class="skill-icon">🌐</span>
+      <h3>HTML &amp; CSS</h3>
+      <p>Websites ki bunyaad. Layouts, animations, responsive design — sab kuch.</p>
+      <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+    </div>
+    <div class="skill-card" data-skill="80">
+      <span class="skill-icon">⚡</span>
+      <h3>JavaScript</h3>
+      <p>Website ko zinda banata hai — animations, APIs, interactive features.</p>
+      <div class="skill-bar"><div class="skill-fill" data-width="80"></div></div>
+    </div>
+    <div class="skill-card" data-skill="75">
+      <span class="skill-icon">🤖</span>
+      <h3>AI Integration</h3>
+      <p>Claude, GPT aur AI tools ko websites mein integrate karna.</p>
+      <div class="skill-bar"><div class="skill-fill" data-width="75"></div></div>
+    </div>
+    <div class="skill-card" data-skill="70">
+      <span class="skill-icon">🎨</span>
+      <h3>3D &amp; Design</h3>
+      <p>Three.js se 3D scenes, CSS effects, aur eye-catching visuals.</p>
+      <div class="skill-bar"><div class="skill-fill" data-width="70"></div></div>
+    </div>
+    <div class="skill-card" data-skill="85">
+      <span class="skill-icon">📱</span>
+      <h3>Responsive Design</h3>
+      <p>Mobile, tablet, desktop — har screen pe perfect dikhti hai website.</p>
+      <div class="skill-bar"><div class="skill-fill" data-width="85"></div></div>
+    </div>
+    <div class="skill-card" data-skill="72">
+      <span class="skill-icon">🚀</span>
+      <h3>Performance</h3>
+      <p>Fast loading, optimized code, aur smooth 60fps animations.</p>
+      <div class="skill-bar"><div class="skill-fill" data-width="72"></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT SECTION -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-text">
+      <h2>Main kaun hoon? <span style="color:var(--cyan)">🤔</span></h2>
+      <p>
+        Mera naam <strong style="color:white">Arsam</strong> hai aur main ek passionate Web Developer hoon.
+        Mujhe technology aur creativity ka combination pasand hai — isliye main
+        3D websites aur AI-powered tools banata hoon jo log pehle nahi dekh chuke.
+      </p>
+      <p>
+        Jab main code nahi likh raha hota, toh main naye tools seekh raha hota hoon,
+        design explore kar raha hota hoon, ya phir apne blog ke liye likh raha hota hoon.
+      </p>
+      <a href="#contact" class="btn btn-glow" style="margin-top:1.5rem; display:inline-block">Kaam Milao</a>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-num">15+</div>
+        <div class="stat-label">Projects</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">2+</div>
+        <div class="stat-label">Saal Experience</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Happy Clients</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Seekhne Ka Jazba</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BLOG SECTION -->
+<section id="blog">
+  <div class="section-header">
+    <p class="section-label">// meri writings</p>
+    <h2 class="section-title">Blog <span>Posts</span></h2>
+  </div>
+  <div class="blog-grid">
+    <div class="blog-card">
+      <div class="blog-thumb blog-thumb-1">✍️</div>
+      <div class="blog-body">
+        <span class="blog-tag">Tutorial</span>
+        <h3>CSS 3D Effects Kaise Banayein — Beginners Guide</h3>
+        <p>Bilkul zero se seekho perspective, rotateX, rotateY — aur banao shandar 3D cards.</p>
+        <div class="blog-meta"><span>📅 2024</span><span>⏱ 8 min read</span></div>
+      </div>
+    </div>
+    <div class="blog-card">
+      <div class="blog-thumb blog-thumb-2">🤖</div>
+      <div class="blog-body">
+        <span class="blog-tag">AI Guide</span>
+        <h3>AI Ko Apni Website Mein Kaise Add Karein</h3>
+        <p>Claude API use karke apni website mein AI chatbot, generator ya helper banana sikho.</p>
+        <div class="blog-meta"><span>📅 2024</span><span>⏱ 12 min read</span></div>
+      </div>
+    </div>
+    <div class="blog-card">
+      <div class="blog-thumb blog-thumb-3">🚀</div>
+      <div class="blog-body">
+        <span class="blog-tag">VS Code</span>
+        <h3>VS Code Extensions Jo Har Developer Ko Chahiye</h3>
+        <p>Top 10 extensions jo aapki coding speed double kar dein ge — tested &amp; approved!</p>
+        <div class="blog-meta"><span>📅 2024</span><span>⏱ 5 min read</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT SECTION -->
+<section id="contact">
+  <div class="contact-box">
+    <h2>Baat <span style="color:var(--cyan)">Karo</span> Mujhse</h2>
+    <p>Koi project hai? Koi sawal hai? Ya bas hello kehna chahte ho — sab theek hai!</p>
+    <form class="contact-form" onsubmit="handleSubmit(event)">
+      <input type="text" class="form-input" placeholder="Aapka Naam" required>
+      <input type="email" class="form-input" placeholder="Aapka Email" required>
+      <input type="text" class="form-input" placeholder="Subject / Topic">
+      <textarea class="form-input" placeholder="Aapka Message yahan likhein..."></textarea>
+      <button type="submit" class="form-submit">Message Bhejo ✦</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ARSAM.AI</div>
+  <div class="footer-text">© 2024 Arsam Ai — Banaya with ❤️ aur bahut saari chai ☕</div>
+</footer>
+
+<!-- JAVASCRIPT -->
+<script>
+/* ---- CUSTOM CURSOR ---- */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  cursor.style.left = mouseX - 6 + 'px';
+  cursor.style.top  = mouseY - 6 + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  ring.style.left = ringX - 18 + 'px';
+  ring.style.top  = ringY - 18 + 'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button, .skill-card, .blog-card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'scale(2)';
+    ring.style.transform = 'scale(1.5)';
+    ring.style.borderColor = 'rgba(168,85,247,0.7)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'scale(1)';
+    ring.style.transform = 'scale(1)';
+    ring.style.borderColor = 'rgba(0,245,255,0.5)';
+  });
+});
+
+/* ---- ANIMATED BACKGROUND (Particles + Grid) ---- */
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < 120; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 1.5 + 0.3,
+      alpha: Math.random() * 0.6 + 0.2,
+      hue: Math.random() > 0.5 ? 180 : 280
+    });
+  }
+}
+
+function drawBg() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(0,245,255,0.03)';
+  ctx.lineWidth = 1;
+  const gs = 60;
+  for (let x = 0; x < W; x += gs) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for (let y = 0; y < H; y += gs) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Particles + connections
+  particles.forEach((p, i) => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.alpha})`;
+    ctx.fill();
+
+    for (let j = i + 1; j < particles.length; j++) {
+      const q = particles[j];
+      const dist = Math.hypot(p.x - q.x, p.y - q.y);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+        ctx.strokeStyle = `rgba(0,245,255,${0.08 * (1 - dist / 120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  });
+
+  requestAnimationFrame(drawBg);
+}
+
+resize(); initParticles(); drawBg();
+window.addEventListener('resize', () => { resize(); initParticles(); });
+
+/* ---- 3D CARD MOUSE TILT ---- */
+document.querySelectorAll('.skill-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top)  / rect.height;
+    card.style.cssText += `
+      --mx: ${x*100}%; --my: ${y*100}%;
+      transform: perspective(700px) rotateX(${(y-0.5)*-18}deg) rotateY(${(x-0.5)*18}deg) translateZ(10px);
+    `;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+/* ---- SKILL BAR ANIMATION ---- */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.skill-fill').forEach(fill => {
+        fill.style.width = fill.dataset.width + '%';
+      });
+    }
+  });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.cards-grid').forEach(g => observer.observe(g));
+
+/* ---- CONTACT FORM ---- */
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('.form-submit');
+  btn.textContent = '✓ Message Bhej Diya!';
+  btn.style.background = 'linear-gradient(135deg, #00ff88, #00cc66)';
+  setTimeout(() => {
+    btn.textContent = 'Message Bhejo ✦';
+    btn.style.background = '';
+    e.target.reset();
+  }, 3000);
+}
+
+/* ---- SMOOTH SCROLL ---- */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
